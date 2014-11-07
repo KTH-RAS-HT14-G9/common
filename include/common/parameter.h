@@ -22,30 +22,51 @@ public:
     void set(T& value);
 
 protected:
+    void init(T& value);
+
     std::string _key;
     T _value;
+    bool _initialized;
+private:
+    T _default_value;
 };
 
 template<typename T>
 Parameter<T>::Parameter(const std::string& key, T fallback_value)
     :_key(key)
+    ,_initialized(false)
+    ,_default_value(fallback_value)
 {
-    if(!ros::param::has(key)) {
-        ros::param::set(_key,fallback_value);
+    init(fallback_value);
+}
+
+template<typename T>
+void Parameter<T>::init(T& default_value)
+{
+    if (ros::isInitialized()) {
+        if(!ros::param::has(_key)) {
+            ros::param::set(_key,default_value);
+        }
+        ros::param::getCached(_key,_value);
+
+        _initialized = true;
     }
-    ros::param::getCached(_key,_value);
 }
 
 template<typename T>
 T Parameter<T>::operator() (){
+    if (!_initialized) init(_default_value);
     ros::param::getCached(_key, _value);
     return _value;
 }
 
 template<typename T>
 void Parameter<T>::set(T& value) {
-    _value = value;
-    ros::param::set(_key, _value);
+    if (!_initialized) init(value);
+    else {
+        _value = value;
+        ros::param::set(_key, _value);
+    }
 }
 
 #endif // ROBOT_H
