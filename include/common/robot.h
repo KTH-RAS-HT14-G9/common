@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include <cmath>
-#include <eigen3/Eigen/Core>
+#include <Eigen/Core>
 
 namespace robot {
 
