@@ -120,7 +120,7 @@ namespace ir {
   * @return Vector2d, where the first coefficient denotes the delta ticks for
   *         the left wheel. The values are rounded down.
   */
-static Vector2i Delta_ticks_for_rotation(double rot) {
+static Eigen::Vector2i Delta_ticks_for_rotation(double rot) {
 
     //boil rotation down to +-180 deg
     for(;rot >  180.0; rot -= 360.0);
@@ -133,7 +133,7 @@ static Vector2i Delta_ticks_for_rotation(double rot) {
     int delta_ticks_right = (int) ( prop::ticks_per_rev * (s / s_per_rev));
     int delta_ticks_left  = -delta_ticks_right;
 
-    Vector2i delta_ticks(delta_ticks_left, delta_ticks_right);
+    Eigen::Vector2i delta_ticks(delta_ticks_left, delta_ticks_right);
     return delta_ticks;
 }
 
