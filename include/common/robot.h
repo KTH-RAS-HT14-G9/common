@@ -2,6 +2,7 @@
 #define ROBOT_H
 
 #include <math.h>
+#include <cmath.h>
 #include <eigen3/Eigen/Core>
 
 namespace robot {
@@ -21,34 +22,89 @@ namespace prop {
 }
 
 namespace ir {
-    const int id_front_left = 0;
-    const int id_front_right = 1;
-    const int id_rear_left = 2;
-    const int id_rear_right = 3;
+    const int id_front_left = 1;
+    const int id_front_right = 2;
+    const int id_rear_left = 3;
+    const int id_rear_right = 4;
+    const int id_front_long_left = 7;
+    const int id_front_long_right = 8;
     
     //in m
     const double offset_front_left = dim::robot_diameter/2.0 - 0.023;
     const double offset_front_right = dim::robot_diameter/2.0 - 0.024;
     const double offset_rear_left = dim::robot_diameter/2.0 - 0.034;
     const double offset_rear_right = dim::robot_diameter/2.0 - 0.032;
-
+    
     static double distance(int id, int voltage) {
+        double dist= 0;
+	double v = voltage;
         switch(id) {
             case id_front_left:
             {
-                return 0;
+               const double FL_p1=-0.8745;
+               const double FL_p2= 4.209;
+               const double FL_p3=-6.922;
+               const double FL_p4= 5.957;
+               const double FL_p5=-7.192;
+               const double FL_p6= 12.31;
+               dist=FL_p1* v*v*v*v*v+ FL_p2*v*v*v*v + FL_p3*v*v*v + FL_p4*v*v + FL_p5*v + FL_p6;
+               
+                return dist;
             }
             case id_front_right:
             {
-                return 0;
+               const double FR_p1=-0.7935;
+               const double FR_p2=3.638;
+               const double FR_p3=-5.976;
+               const double FR_p4=5.676;
+               const double FR_p5=-7.334;
+               const double FR_p6=12.45;
+               dist=FR_p1*v*v*v*v*v + FR_p2*v*v*v*v + FR_p3*v*v*v + FR_p4*v*v + FR_p5*v + FR_p6;
+                return dist;
             }
             case id_rear_left:
-            {
-                return 0;
+            {    
+                const double BL_a=20080;
+                const double BL_b=-1.44;
+                const double BL_c=4.234;
+                dist=BL_a*pow(x,BL_b)+BL_c;
+                return dist;
             }
             case id_rear_right:
             {
-                return 0;
+               const double BR_p1=-0.7276;
+               const double BR_p2=2.757;
+               const double BR_p3=-3.964;
+               const double BR_p4=4.782;
+               const double BR_p5=-7.936;
+               const double BR_p6=12.86;
+               dist=BR_p1*v*v*v*v*v + BR_p2*v*v*v*v + BR_p3*v*v*v+ BR_p4*v*v + BR_p5*v + BR_p6;
+                
+                return dist;
+            }
+            case id_front_long_left:
+            {
+               const double FL_L_p1=-1.379;
+               const double FL_L_p2= 5.483 ;
+               const double FL_L_p3=-7.03 ;
+               const double FL_L_p4= 6.301;
+               const double FL_L_p5=-12.76;
+               const double FL_L_p6= 23.53;
+               dist=FL_L_p1* v*v*v*v*v+ FL_L_p2*v*v*v*v + FL_L_p3*v*v*v + FL_L_p4*v*v + FL_L_p5*v + FL_L_p6;
+               
+                return dist;
+            }
+            case id_front_long_right:
+            {
+               const double FR_L_p1=-0.7737;
+               const double FR_L_p2= 3.388 ;
+               const double FR_L_p3=-5.781;
+               const double FR_L_p4= 7.77;
+               const double FR_L_p5=-13.65;
+               const double FR_L_p6= 23.43 ;
+               dist=FR_L_p1* v*v*v*v*v+ FR_L_p2*v*v*v*v + FR_L_p3*v*v*v + FR_L_p4*v*v + FR_L_p5*v + FR_L_p6;
+               
+               return dist;
             }
             default:
             {
