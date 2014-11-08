@@ -2,7 +2,7 @@
 #define ROBOT_H
 
 #include <math.h>
-#include <cmath.h>
+#include <cmath>
 #include <eigen3/Eigen/Core>
 
 namespace robot {
@@ -67,7 +67,7 @@ namespace ir {
                 const double BL_a=20080;
                 const double BL_b=-1.44;
                 const double BL_c=4.234;
-                dist=BL_a*pow(x,BL_b)+BL_c;
+                dist=BL_a*pow(v,BL_b)+BL_c;
                 return dist;
             }
             case id_rear_right:
