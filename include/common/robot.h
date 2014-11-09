@@ -41,13 +41,14 @@ namespace ir {
         switch(id) {
             case id_front_left:
             {
-                const double FL_p1 =  -9.726*pow(10,-12)  ;
-                const double FL_p2 =   1.889*pow(10,-8)  ;
-                const double FL_p3 =  -1.436*(10,-05) ;
-                const double FL_p4 =    0.005397  ;
-                const double FL_p5 =      -1.039 ;
-                const double FL_p6 =        94.2 ;
-               dist=FL_p1* v*v*v*v*v+ FL_p2*v*v*v*v + FL_p3*v*v*v + FL_p4*v*v + FL_p5*v + FL_p6;
+                const double FL_a1 =  8.636*pow(10,16)  ;
+                const double FL_b1 =  -3591  ;
+                const double FL_c1 =  613.4 ;
+                const double FL_a2 =  245.8 ;
+                const double FL_b2 =  -2220;
+                const double FL_c2 =  1402 ;
+                
+                dist =  FL_a1*exp(-((v-FL_b1)/FL_c1)^2) + a2*exp(-((v-FL_b2)/FL_c2)^2);
                
                 return dist;
             }
