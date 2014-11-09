@@ -48,7 +48,7 @@ namespace ir {
                 const double FL_b2 =  -2220;
                 const double FL_c2 =  1402 ;
                 
-                dist =  FL_a1*exp(-((v-FL_b1)/FL_c1)^2) + a2*exp(-((v-FL_b2)/FL_c2)^2);
+                dist =  FL_a1*exp(-((v-FL_b1)/FL_c1)*((v-FL_b1)/FL_c1)) + FL_a2*exp(-((v-FL_b2)/FL_c2)*((v-FL_b2)/FL_c2));
                
                 return dist;
             }
