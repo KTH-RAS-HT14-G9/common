@@ -13,6 +13,14 @@ namespace common {
     typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloudRGB;
     typedef PointCloudRGB::ConstPtr SharedPointCloudRGB;
 
+
+    class Color {
+    public:
+        Color(int cr, int cg, int cb)
+            :r(cr),g(cg),b(cb) {}
+        int r, g, b;
+    };
+
 }
 
 #endif // TYPES_H
