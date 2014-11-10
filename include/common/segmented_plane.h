@@ -5,14 +5,14 @@
 #include <pcl/point_types.h>
 #include <pcl/pcl_base.h>
 #include <Eigen/Core>
-#include <wall_detector/Walls.h>
+#include <object_detector/Walls.h>
 
 namespace common {
 namespace vision {
 
     class SegmentedPlane {
     public:
-        typedef boost::shared_ptr<wall_detector::Walls> WallsMsgPtr;
+        typedef boost::shared_ptr<object_detector::Walls> WallsMsgPtr;
 
         SegmentedPlane(const pcl::ModelCoefficientsConstPtr& coefficients,
                       const Eigen::Vector4d& centroid)
@@ -45,11 +45,11 @@ namespace vision {
 
     SegmentedPlane::WallsMsgPtr segmentedPlaneToMsg(const SegmentedPlane::ArrayPtr& data)
     {
-        SegmentedPlane::WallsMsgPtr msg(new wall_detector::Walls);
+        SegmentedPlane::WallsMsgPtr msg(new object_detector::Walls);
 
         for(int i = 0; i < data->size(); ++i)
         {
-            wall_detector::Wall wall;
+            object_detector::Wall wall;
             pcl::ModelCoefficientsConstPtr coeff = data->at(i).get_coefficients();
             //pcl::PointIndicesConstPtr inliers = data->at(i).get_inliers();
 
