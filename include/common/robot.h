@@ -88,27 +88,19 @@ namespace ir {
             }
             case id_front_long_left:
             {   
-               const double FL_L_p1=-1.379;
-               const double FL_L_p2= 5.483 ;
-               const double FL_L_p3=-7.03 ;
-               const double FL_L_p4= 6.301;
-               const double FL_L_p5=-12.76;
-               const double FL_L_p6= 23.53;
-               dist=FL_L_p1* v*v*v*v*v+ FL_L_p2*v*v*v*v + FL_L_p3*v*v*v + FL_L_p4*v*v + FL_L_p5*v + FL_L_p6;
-               
+                const double FL_L_a=5095;
+                const double FL_L_b= -0.9736;
+                const double FL_L_c=-0.7674;
+                dist=0.01*(FL_L_a*pow(v,FL_L_b)+FL_L_c);
                 return dist;
             }
             case id_front_long_right:
             {
-               const double FR_L_p1=-0.7737;
-               const double FR_L_p2= 3.388 ;
-               const double FR_L_p3=-5.781;
-               const double FR_L_p4= 7.77;
-               const double FR_L_p5=-13.65;
-               const double FR_L_p6= 23.43 ;
-               dist=FR_L_p1* v*v*v*v*v+ FR_L_p2*v*v*v*v + FR_L_p3*v*v*v + FR_L_p4*v*v + FR_L_p5*v + FR_L_p6;
-               
-               return dist;
+              const double FR_L_a=9093;
+                const double FR_L_b= -1.068;
+                const double FR_L_c=-0.5847;
+                dist=0.01*(FR_L_a*pow(v,FR_L_b)+FR_L_c);
+                return dist;
             }
             default:
             {

@@ -48,19 +48,21 @@ namespace ir {
                 const double FL_b2 =  -2220;
                 const double FL_c2 =  1402 ;
                 
-                dist =  FL_a1*exp(-((v-FL_b1)/FL_c1)*((v-FL_b1)/FL_c1)) + FL_a2*exp(-((v-FL_b2)/FL_c2)*((v-FL_b2)/FL_c2));
+                dist =  0.01*(FL_a1*exp(-((v-FL_b1)/FL_c1)*((v-FL_b1)/FL_c1)) + FL_a2*exp(-((v-FL_b2)/FL_c2)*((v-FL_b2)/FL_c2)));
                
                 return dist;
             }
             case id_front_right:
             {
-               const double FR_p1=-0.7935;
-               const double FR_p2=3.638;
-               const double FR_p3=-5.976;
-               const double FR_p4=5.676;
-               const double FR_p5=-7.334;
-               const double FR_p6=12.45;
-               dist=FR_p1*v*v*v*v*v + FR_p2*v*v*v*v + FR_p3*v*v*v + FR_p4*v*v + FR_p5*v + FR_p6;
+                const double FR_a1 =  7.334*pow(10,15)  ;
+                const double FR_b1 =  -4256  ;
+                const double FR_c1 =  751.5 ;
+                const double FR_a2 =  11.02 ;
+                const double FR_b2 =  78.94;
+                const double FR_c2 =  510.6 ;
+                
+                dist =  0.01*(FR_a1*exp(-((v-FR_b1)/FR_c1)*((v-FR_b1)/FR_c1)) + FR_a2*exp(-((v-FR_b2)/FR_c2)*((v-FR_b2)/FR_c2)));
+               
                 return dist;
             }
             case id_rear_left:
@@ -68,23 +70,24 @@ namespace ir {
                 const double BL_a=20080;
                 const double BL_b=-1.44;
                 const double BL_c=4.234;
-                dist=BL_a*pow(v,BL_b)+BL_c;
+                dist=0.01*(BL_a*pow(v,BL_b)+BL_c);
                 return dist;
             }
             case id_rear_right:
-            {
-               const double BR_p1=-0.7276;
-               const double BR_p2=2.757;
-               const double BR_p3=-3.964;
-               const double BR_p4=4.782;
-               const double BR_p5=-7.936;
-               const double BR_p6=12.86;
-               dist=BR_p1*v*v*v*v*v + BR_p2*v*v*v*v + BR_p3*v*v*v+ BR_p4*v*v + BR_p5*v + BR_p6;
+            {      
+                const double BR_a1 =  7.831*pow(10,15)  ;
+                const double BR_b1 =  -5190  ;
+                const double BR_c1 =  912.1 ;
+                const double BR_a2 =  9.748 ;
+                const double BR_b2 =  148.4;
+                const double BR_c2 =  461.8 ;
                 
+                dist =  0.01*(BR_a1*exp(-((v-BR_b1)/BR_c1)*((v-BR_b1)/BR_c1)) + BR_a2*exp(-((v-BR_b2)/BR_c2)*((v-BR_b2)/BR_c2)));
+               
                 return dist;
             }
             case id_front_long_left:
-            {
+            {   
                const double FL_L_p1=-1.379;
                const double FL_L_p2= 5.483 ;
                const double FL_L_p3=-7.03 ;
