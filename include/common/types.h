@@ -10,6 +10,9 @@ namespace common {
     typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
     typedef PointCloud::ConstPtr SharedPointCloud;
 
+    typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloudRGB;
+    typedef PointCloudRGB::ConstPtr SharedPointCloudRGB;
+
 }
 
 #endif // TYPES_H
