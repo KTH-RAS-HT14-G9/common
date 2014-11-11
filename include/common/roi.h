@@ -5,6 +5,8 @@
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 #include <opencv2/core/core.hpp>
+#include <object_detector/ROI.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 namespace common {
 
@@ -25,6 +27,17 @@ namespace common {
         typedef boost::shared_ptr<const ROI> ROIConstPtr;
         typedef boost::shared_ptr<std::vector<ROI> > ROIArrayPtr;
 
+        void roiToMsg(const ROIArrayPtr& rois, object_detector::ROIPtr& msg) {
+            for (int i = 0; i < rois->size(); ++i)
+            {
+                sensor_msgs::PointCloud2 msgcloud;
+
+                const ROI& roi = rois->at(i);
+                pcl::toROSMsg<pcl::PointXYZRGB>(*roi.pcloud_of_interest, msgcloud);
+
+                msg->pointClouds.push_back(msgcloud);
+            }
+        }
     }
 
 }
