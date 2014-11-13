@@ -15,7 +15,7 @@ namespace dim {
 }
 
 namespace prop {
-    const double encoder_publish_frequency = 10.0;
+    const double encoder_publish_frequency = 50.0;
     const double ticks_per_rev = 360.0;
     const double max_velocity = 5.0;
     const double max_rot_velocity = M_PI/4.0;
