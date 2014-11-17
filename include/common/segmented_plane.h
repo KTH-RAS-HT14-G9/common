@@ -5,29 +5,32 @@
 #include <pcl/point_types.h>
 #include <pcl/pcl_base.h>
 #include <Eigen/Core>
-#include <object_detector/Walls.h>
+#include <object_detector/Planes.h>
+#include "obb.h"
 
 namespace common {
 namespace vision {
 
     class SegmentedPlane {
     public:
-        typedef boost::shared_ptr<object_detector::Walls> WallsMsgPtr;
+        typedef boost::shared_ptr<object_detector::Planes> PlanesMsgPtr;
 
         SegmentedPlane(const pcl::ModelCoefficientsConstPtr& coefficients,
-                      const Eigen::Vector4d& centroid)
+                       const Eigen::Vector4d& centroid,
+                       const OrientedBoundingBox& obb)
+            :_coefficients(coefficients)
+            ,_centroid(centroid)
+            ,_obb(obb)
+            ,_is_ground_plane(false)
         {
-            _coefficients = coefficients;
-            _centroid = centroid;
         }
 
-        SegmentedPlane(const WallsMsgPtr& msg)
-        {
-            //TODO
-        }
+        void set_as_ground_plane() { _is_ground_plane = true; }
 
-        pcl::ModelCoefficientsConstPtr get_coefficients() { return _coefficients; }
-        Eigen::Vector4d get_centroid() { return _centroid; }
+        const pcl::ModelCoefficientsConstPtr& get_coefficients() { return _coefficients; }
+        const Eigen::Vector4d& get_centroid() { return _centroid; }
+        const OrientedBoundingBox& get_obb() { return _obb; }
+        bool is_ground_plane() { return _is_ground_plane; }
 
         //typedefs
         typedef boost::shared_ptr<std::vector<SegmentedPlane> > ArrayPtr;
@@ -35,6 +38,8 @@ namespace vision {
     protected:
         pcl::ModelCoefficientsConstPtr _coefficients;
         Eigen::Vector4d _centroid;
+        OrientedBoundingBox _obb;
+        bool _is_ground_plane;
     };
 
     template<typename T>
@@ -43,20 +48,18 @@ namespace vision {
         a.insert(a.begin(), b.begin(), b.end());
     }
 
-    SegmentedPlane::WallsMsgPtr segmentedPlaneToMsg(const SegmentedPlane::ArrayPtr& data)
+    SegmentedPlane::PlanesMsgPtr segmentedPlaneToMsg(const SegmentedPlane::ArrayPtr& data)
     {
-        SegmentedPlane::WallsMsgPtr msg(new object_detector::Walls);
+        SegmentedPlane::PlanesMsgPtr msg(new object_detector::Planes);
 
         for(int i = 0; i < data->size(); ++i)
         {
-            object_detector::Wall wall;
+            object_detector::Plane plane;
             pcl::ModelCoefficientsConstPtr coeff = data->at(i).get_coefficients();
-            //pcl::PointIndicesConstPtr inliers = data->at(i).get_inliers();
 
-            append_all<float>(wall.plane_coefficients, coeff->values);
-            //append_all<int>(wall.point_cloud_inliers, inliers->indices);
+            append_all<float>(plane.plane_coefficients, coeff->values);
 
-            msg->walls.push_back(wall);
+            msg->planes.push_back(plane);
         }
 
         return msg;
