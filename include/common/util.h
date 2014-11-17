@@ -16,10 +16,12 @@ namespace common {
     template<typename T>
     class Hysteresis {
     public:
+        Hysteresis() {}
+
         Hysteresis(T lower_threshold,
                    T upper_threshold,
-                   T upper_output,
                    T lower_output,
+                   T upper_output,
                    T initial_state,
                    T initial_output)
 
@@ -30,6 +32,18 @@ namespace common {
             ,_last_state(initial_state)
             ,_last_output(initial_output)
         {
+        }
+
+        void set(T lower_threshold,
+                 T upper_threshold,
+                 T lower_output,
+                 T upper_output)
+        {
+            _lower_threshold = lower_threshold;
+            _upper_threshold = upper_threshold;
+            _lower_output = lower_output;
+            _upper_output = upper_output;
+
         }
 
         T apply(T state)
