@@ -16,7 +16,16 @@ namespace common {
     template<typename T>
     class Hysteresis {
     public:
-        Hysteresis() {}
+        Hysteresis() {
+
+			_lower_threshold = 0;
+			_upper_threshold = 0;
+			_lower_output = 0;
+			_upper_output = 0;
+			_last_state = 0;
+			_last_output = 0;
+
+		}
 
         Hysteresis(T lower_threshold,
                    T upper_threshold,
