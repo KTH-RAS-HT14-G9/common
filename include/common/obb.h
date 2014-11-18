@@ -33,6 +33,9 @@ namespace common {
         float get_height() { return height; }
         float get_depth() { return depth; }
 
+        void serialize(std::vector<float>& target) const;
+        static OrientedBoundingBox deserialize(const std::vector<float>& source);
+
     protected:
         Eigen::Vector3f translation;
         Eigen::Quaternionf rotation;
@@ -71,6 +74,35 @@ namespace common {
         width = max_pt.x - min_pt.x;
         height = max_pt.y - min_pt.y;
         depth = max_pt.z - min_pt.z;
+    }    
+
+    void OrientedBoundingBox::serialize(std::vector<float>& target) const
+    {
+        target.reserve(3 + 4 + 3);
+
+        target.push_back(translation(0));
+        target.push_back(translation(1));
+        target.push_back(translation(2));
+
+        target.push_back(rotation.w());
+        target.push_back(rotation.x());
+        target.push_back(rotation.y());
+        target.push_back(rotation.z());
+
+        target.push_back(width);
+        target.push_back(height);
+        target.push_back(depth);
+    }
+
+    OrientedBoundingBox OrientedBoundingBox::deserialize(const std::vector<float> &source)
+    {
+        Eigen::Vector3f translation(source[0],source[1],source[2]);
+        Eigen::Quaternionf rotation(source[3],source[4],source[5],source[6]);
+        double width = source[7];
+        double height = source[8];
+        double depth = source[9];
+
+        return OrientedBoundingBox(translation, rotation, width, height, depth);
     }
 
 }

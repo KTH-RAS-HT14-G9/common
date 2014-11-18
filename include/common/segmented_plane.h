@@ -13,13 +13,10 @@ namespace vision {
 
     class SegmentedPlane {
     public:
-        typedef boost::shared_ptr<object_detector::Planes> PlanesMsgPtr;
 
         SegmentedPlane(const pcl::ModelCoefficientsConstPtr& coefficients,
-                       const Eigen::Vector4d& centroid,
                        const OrientedBoundingBox& obb)
             :_coefficients(coefficients)
-            ,_centroid(centroid)
             ,_obb(obb)
             ,_is_ground_plane(false)
         {
@@ -28,7 +25,6 @@ namespace vision {
         void set_as_ground_plane() { _is_ground_plane = true; }
 
         const pcl::ModelCoefficientsConstPtr& get_coefficients() { return _coefficients; }
-        const Eigen::Vector4d& get_centroid() { return _centroid; }
         const OrientedBoundingBox& get_obb() { return _obb; }
         bool is_ground_plane() { return _is_ground_plane; }
 
@@ -37,7 +33,6 @@ namespace vision {
 
     protected:
         pcl::ModelCoefficientsConstPtr _coefficients;
-        Eigen::Vector4d _centroid;
         OrientedBoundingBox _obb;
         bool _is_ground_plane;
     };
@@ -48,22 +43,48 @@ namespace vision {
         a.insert(a.begin(), b.begin(), b.end());
     }
 
-    SegmentedPlane::PlanesMsgPtr segmentedPlaneToMsg(const SegmentedPlane::ArrayPtr& data)
-    {
-        SegmentedPlane::PlanesMsgPtr msg(new object_detector::Planes);
-
-        for(int i = 0; i < data->size(); ++i)
+    void planesToMsg(const SegmentedPlane::ArrayPtr& source, object_detector::PlanesPtr& msg)
+    {        
+        for(int i = 0; i < source->size(); ++i)
         {
-            object_detector::Plane plane;
-            pcl::ModelCoefficientsConstPtr coeff = data->at(i).get_coefficients();
+            object_detector::Plane msg_plane;
 
-            append_all<float>(plane.plane_coefficients, coeff->values);
+            SegmentedPlane& seg_plane = source->at(i);
+            const pcl::ModelCoefficientsConstPtr& coeff = seg_plane.get_coefficients();
 
-            msg->planes.push_back(plane);
+            append_all<float>(msg_plane.plane_coefficients, coeff->values);
+
+            seg_plane.get_obb().serialize(msg_plane.bounding_box);
+
+            msg_plane.is_ground_plane = seg_plane.is_ground_plane();
+
+            msg->planes.push_back(msg_plane);
         }
-
-        return msg;
     }
+
+    void msgToPlanes(const object_detector::PlanesConstPtr& msg, SegmentedPlane::ArrayPtr& target)
+    {
+        for(int i = 0; i < msg->planes.size(); ++i)
+        {
+            const object_detector::Plane& msg_plane = msg->planes[i];
+
+            //copy over coefficients
+            pcl::ModelCoefficientsPtr coeff(new pcl::ModelCoefficients);
+            for(int i = 0; i < msg_plane.plane_coefficients.size(); ++i)
+                coeff->values.push_back(msg_plane.plane_coefficients[i]);
+
+            //copy bounding box
+            OrientedBoundingBox obb = OrientedBoundingBox::deserialize(msg_plane.bounding_box);
+
+            //create resulting plane
+            SegmentedPlane seg_plane(coeff, obb);
+            if (msg_plane.is_ground_plane) seg_plane.set_as_ground_plane();
+
+            target->push_back(seg_plane);
+        }
+    }
+
+
 
 } //vision
 } //common
