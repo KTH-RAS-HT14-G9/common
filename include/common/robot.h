@@ -8,10 +8,10 @@
 namespace robot {
 
 namespace dim {
-    const double robot_diameter = 0.23;
+    const double robot_diameter = 0.25;
     const double robot_height = 0.28;
     const double wheel_radius = 0.04975;
-    const double wheel_distance = 0.23;
+    const double wheel_distance = 0.215;
 }
 
 namespace prop {
@@ -30,10 +30,10 @@ namespace ir {
     const int id_front_long_right = 8;
     
     //in m
-    const double offset_front_left = dim::robot_diameter/2.0 - 0.023;
-    const double offset_front_right = dim::robot_diameter/2.0 - 0.024;
-    const double offset_rear_left = dim::robot_diameter/2.0 - 0.034;
-    const double offset_rear_right = dim::robot_diameter/2.0 - 0.032;
+    const double offset_front_left = dim::robot_diameter/2.0 - 0.021;
+    const double offset_front_right = dim::robot_diameter/2.0 - 0.020;
+    const double offset_rear_left = dim::robot_diameter/2.0 - 0.0305;
+    const double offset_rear_right = dim::robot_diameter/2.0 - 0.030;
     
     static double distance(int id, int voltage) {
         double dist= 0;
