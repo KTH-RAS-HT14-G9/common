@@ -10,8 +10,8 @@ namespace robot {
 namespace dim {
     const double robot_diameter = 0.23;
     const double robot_height = 0.28;
-    const double wheel_radius = 0.049;
-    const double wheel_distance = 0.21;
+    const double wheel_radius = 0.04975;
+    const double wheel_distance = 0.23;
 }
 
 namespace prop {
@@ -50,6 +50,7 @@ namespace ir {
                 
                 dist =  0.01*(FL_a1*exp(-((v-FL_b1)/FL_c1)*((v-FL_b1)/FL_c1)) + FL_a2*exp(-((v-FL_b2)/FL_c2)*((v-FL_b2)/FL_c2)));
                
+                if (std::isinf(dist)) return dim::robot_diameter/2.0 - ir::offset_front_left;
                 return dist;
             }
             case id_front_right:
@@ -63,6 +64,7 @@ namespace ir {
                 
                 dist =  0.01*(FR_a1*exp(-((v-FR_b1)/FR_c1)*((v-FR_b1)/FR_c1)) + FR_a2*exp(-((v-FR_b2)/FR_c2)*((v-FR_b2)/FR_c2)));
                
+                if (std::isinf(dist)) return dim::robot_diameter/2.0 - ir::offset_front_right;
                 return dist;
             }
             case id_rear_left:
@@ -71,6 +73,8 @@ namespace ir {
                 const double BL_b=-1.44;
                 const double BL_c=4.234;
                 dist=0.01*(BL_a*pow(v,BL_b)+BL_c);
+
+                if (std::isinf(dist)) return dim::robot_diameter/2.0 - ir::offset_rear_left;
                 return dist;
             }
             case id_rear_right:
@@ -84,6 +88,7 @@ namespace ir {
                 
                 dist =  0.01*(BR_a1*exp(-((v-BR_b1)/BR_c1)*((v-BR_b1)/BR_c1)) + BR_a2*exp(-((v-BR_b2)/BR_c2)*((v-BR_b2)/BR_c2)));
                
+                if (std::isinf(dist)) return dim::robot_diameter/2.0 - ir::offset_rear_right;
                 return dist;
             }
             case id_front_long_left:
@@ -122,7 +127,7 @@ static Eigen::Vector2i Delta_ticks_for_rotation(double rot) {
     for(;rot >  180.0; rot -= 360.0);
     for(;rot < -180.0; rot += 360.0);
 
-    double turn_circumference = M_PI*dim::robot_diameter;
+    double turn_circumference = M_PI*dim::wheel_distance;
     double s = turn_circumference * (rot/360.0);
 
     double s_per_rev = 2.0*M_PI*dim::wheel_radius;
