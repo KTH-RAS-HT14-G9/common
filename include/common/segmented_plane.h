@@ -28,6 +28,12 @@ namespace vision {
         const OrientedBoundingBox& get_obb() { return _obb; }
         bool is_ground_plane() { return _is_ground_plane; }
 
+        double distance(const Eigen::Vector3f& p)
+        {
+            double dist = (_coefficients->values[0] * p(0) + _coefficients->values[1] * p(1) + _coefficients->values[2] * p(2) + _coefficients->values[3]);
+            return dist;
+        }
+
         //typedefs
         typedef boost::shared_ptr<std::vector<SegmentedPlane> > ArrayPtr;
 
