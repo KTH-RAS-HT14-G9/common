@@ -43,7 +43,7 @@ namespace common {
         {
         }
 
-        void set(T lower_threshold,
+        virtual void set(T lower_threshold,
                  T upper_threshold,
                  T lower_output,
                  T upper_output)
@@ -55,20 +55,20 @@ namespace common {
 
         }
 
-        T apply(T state)
+        virtual T apply(T state)
         {
             T output;
 
             if (state > _last_state)
             {
-                if (state > _upper_threshold)
+                if (state >= _upper_threshold)
                     output = _upper_output;
                 else
                     output = _last_output;
             }
             else
             {
-                if (state < _lower_threshold)
+                if (state <= _lower_threshold)
                     output = _lower_output;
                 else
                     output = _last_output;
@@ -90,6 +90,46 @@ namespace common {
         T _lower_output;
         T _upper_output;
     };
+
+    /**
+      * Implements gradient from upper threshold to lower threshold
+      * when the upper threshold is breached by a decreasing signal
+      */
+//    template<typename T>
+//    class GradientHysteresis : public Hysteresis<T> {
+//    public:
+//        GradientHysteresis()
+//            :Hysteresis()
+//        {}
+
+//        virtual T apply(T state)
+//        {
+//            T output;
+
+//            if (state > _last_state)
+//            {
+//                if (state > _upper_threshold)
+//                    output = _upper_output;
+//                else
+//                    output = _last_output;
+//            }
+//            else
+//            {
+//                if (state < _lower_threshold)
+//                    output = _lower_output;
+//                else {
+//                    if (state < _upper_threshold)
+//                        output = _lower_threshold + (_upper_threshold - state);
+//                    output = _last_output;
+//                }
+//            }
+
+//            _last_output = output;
+//            _last_state = state;
+
+//            return output;
+//        }
+//    };
 
 }
 
