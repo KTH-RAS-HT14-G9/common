@@ -105,16 +105,23 @@ namespace common {
 
         virtual void set(T lower_threshold, T upper_threshold, T lower_output, T upper_output)
         {
-            Hysteresis<T>::set(lower_threshold,upper_threshold,lower_output,upper_output);
+            if (upper_output < lower_output)
+                _sign = T(-1);
+            else
+                _sign = T(1);
+
+            Hysteresis<T>::set(_sign*lower_threshold,_sign*upper_threshold,_sign*lower_output,_sign*upper_output);
         }
 
         virtual T apply(T state)
         {
+            state = _sign * state;
+
             T output;
 
             if (state > Hysteresis<T>::_last_state)
             {
-                if (state > Hysteresis<T>::_upper_threshold) {
+                if (state >= Hysteresis<T>::_upper_threshold) {
                     output = Hysteresis<T>::_upper_output;
                     _interpolate = true;
                 }
@@ -128,7 +135,7 @@ namespace common {
             }
             else
             {
-                if (state < Hysteresis<T>::_lower_threshold) {
+                if (state <= Hysteresis<T>::_lower_threshold) {
                     output = Hysteresis<T>::_lower_output;
                     _interpolate = false;
                 }
@@ -144,14 +151,16 @@ namespace common {
             Hysteresis<T>::_last_output = output;
             Hysteresis<T>::_last_state = state;
 
-            return output;
+            return _sign*output;
         }
 
     protected:
         bool _interpolate;
+        T _sign;
         T func(T state) {
             double x = (double)(state - Hysteresis<T>::_lower_threshold) / (double)(Hysteresis<T>::_upper_threshold - Hysteresis<T>::_lower_threshold);
             double o = (double)Hysteresis<T>::_lower_output + (double)(Hysteresis<T>::_upper_output - Hysteresis<T>::_lower_output)*x;
+
             return common::Clamp<T>(o, Hysteresis<T>::_lower_output, Hysteresis<T>::_upper_output);
         }
     };
@@ -159,22 +168,42 @@ namespace common {
 
     void test_gradient_hysteresis()
     {
-        GradientHysteresis<int> hyst;
-        hyst.set(0,10,0,50);
+        ROS_INFO("Positive input..............................................");
+        GradientHysteresis<int> hyst_pos;
+        hyst_pos.set(0,10,0,50);
 
         for(int i = 0; i < 15; ++i)
-            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+            ROS_INFO("i=%d \t o=%d", i, hyst_pos.apply(i));
 
         for(int i = 15; i > 2; --i )
-            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+            ROS_INFO("i=%d \t o=%d", i, hyst_pos.apply(i));
 
         for(int i = 2; i < 15; ++i)
-            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+            ROS_INFO("i=%d \t o=%d", i, hyst_pos.apply(i));
 
         for(int i = 15; i > -5; --i)
-            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+            ROS_INFO("i=%d \t o=%d", i, hyst_pos.apply(i));
 
         for(int i = -5; i < 10; ++i)
+            ROS_INFO("i=%d \t o=%d", i, hyst_pos.apply(i));
+
+        ROS_INFO("\n\nNegative input..............................................");
+        GradientHysteresis<int> hyst;
+        hyst.set(0,-10,0,-50);
+
+        for(int i = 0; i > -15; --i)
+            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+
+        for(int i = -15; i < -2; ++i )
+            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+
+        for(int i = -2; i > -15; --i)
+            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+
+        for(int i = -15; i < 5; ++i)
+            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+
+        for(int i = 5; i > -10; --i)
             ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
     }
 
