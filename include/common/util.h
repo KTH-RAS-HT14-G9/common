@@ -95,41 +95,88 @@ namespace common {
       * Implements gradient from upper threshold to lower threshold
       * when the upper threshold is breached by a decreasing signal
       */
-//    template<typename T>
-//    class GradientHysteresis : public Hysteresis<T> {
-//    public:
-//        GradientHysteresis()
-//            :Hysteresis()
-//        {}
+    template<typename T>
+    class GradientHysteresis : public Hysteresis<T> {
+    public:
+        GradientHysteresis()
+            :Hysteresis<T>()
+            ,_interpolate(false)
+        {}
 
-//        virtual T apply(T state)
-//        {
-//            T output;
+        virtual void set(T lower_threshold, T upper_threshold, T lower_output, T upper_output)
+        {
+            Hysteresis<T>::set(lower_threshold,upper_threshold,lower_output,upper_output);
+        }
 
-//            if (state > _last_state)
-//            {
-//                if (state > _upper_threshold)
-//                    output = _upper_output;
-//                else
-//                    output = _last_output;
-//            }
-//            else
-//            {
-//                if (state < _lower_threshold)
-//                    output = _lower_output;
-//                else {
-//                    if (state < _upper_threshold)
-//                        output = _lower_threshold + (_upper_threshold - state);
-//                    output = _last_output;
-//                }
-//            }
+        virtual T apply(T state)
+        {
+            T output;
 
-//            _last_output = output;
-//            _last_state = state;
+            if (state > Hysteresis<T>::_last_state)
+            {
+                if (state > Hysteresis<T>::_upper_threshold) {
+                    output = Hysteresis<T>::_upper_output;
+                    _interpolate = true;
+                }
+                else {
 
-//            return output;
-//        }
-//    };
+                    if (state >= Hysteresis<T>::_lower_threshold && _interpolate)
+                        output = func(state);
+                    else
+                        output = Hysteresis<T>::_last_output;
+                }
+            }
+            else
+            {
+                if (state < Hysteresis<T>::_lower_threshold) {
+                    output = Hysteresis<T>::_lower_output;
+                    _interpolate = false;
+                }
+                else {
+
+                    if (state <= Hysteresis<T>::_upper_threshold && _interpolate)
+                        output = func(state);
+                    else
+                        output = Hysteresis<T>::_last_output;
+                }
+            }
+
+            Hysteresis<T>::_last_output = output;
+            Hysteresis<T>::_last_state = state;
+
+            return output;
+        }
+
+    protected:
+        bool _interpolate;
+        T func(T state) {
+            double x = (double)(state - Hysteresis<T>::_lower_threshold) / (double)(Hysteresis<T>::_upper_threshold - Hysteresis<T>::_lower_threshold);
+            double o = (double)Hysteresis<T>::_lower_output + (double)(Hysteresis<T>::_upper_output - Hysteresis<T>::_lower_output)*x;
+            return common::Clamp<T>(o, Hysteresis<T>::_lower_output, Hysteresis<T>::_upper_output);
+        }
+    };
+
+
+    void test_gradient_hysteresis()
+    {
+        GradientHysteresis<int> hyst;
+        hyst.set(0,10,0,50);
+
+        for(int i = 0; i < 15; ++i)
+            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+
+        for(int i = 15; i > 2; --i )
+            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+
+        for(int i = 2; i < 15; ++i)
+            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+
+        for(int i = 15; i > -5; --i)
+            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+
+        for(int i = -5; i < 10; ++i)
+            ROS_INFO("i=%d \t o=%d", i, hyst.apply(i));
+    }
 
 }
 
