@@ -12,6 +12,7 @@ namespace dim {
     const double robot_height = 0.28;
     const double wheel_radius = 0.04975;
     const double wheel_distance = 0.215;
+    const double body_width = 0.163;
 }
 
 namespace prop {
@@ -30,10 +31,10 @@ namespace ir {
     const int id_front_long_right = 8;
     
     //in m
-    const double offset_front_left = dim::robot_diameter/2.0 - 0.021;
-    const double offset_front_right = dim::robot_diameter/2.0 - 0.020;
-    const double offset_rear_left = dim::robot_diameter/2.0 - 0.0305;
-    const double offset_rear_right = dim::robot_diameter/2.0 - 0.030;
+    const double offset_front_left = dim::body_width/2.0 - 0.021;
+    const double offset_front_right = dim::body_width/2.0 - 0.020;
+    const double offset_rear_left = dim::body_width/2.0 - 0.0305;
+    const double offset_rear_right = dim::body_width/2.0 - 0.030;
     
     const double offset_front_left_forward = 8.4;
     const double offset_front_right_forward = 8.4;
