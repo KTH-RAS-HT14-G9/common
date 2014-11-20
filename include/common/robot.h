@@ -35,6 +35,11 @@ namespace ir {
     const double offset_rear_left = dim::robot_diameter/2.0 - 0.0305;
     const double offset_rear_right = dim::robot_diameter/2.0 - 0.030;
     
+    const double offset_front_left_forward = 8.4;
+    const double offset_front_right_forward = 8.4;
+    const double offset_rear_left_forward = 8.2;
+    const double offset_rear_right_forward = 8.3;
+
     static double distance(int id, int voltage) {
         double dist= 0;
 	double v = voltage;
