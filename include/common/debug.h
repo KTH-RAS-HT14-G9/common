@@ -5,7 +5,7 @@
 // Vision
 #define ENABLE_VISUALIZATION_PLANES 0
 #define ENABLE_VISUALIZATION_ROIS 0
-#define ENABLE_VISUALIZATION_RECOGNITION 1
+#define ENABLE_VISUALIZATION_RECOGNITION 0
 
 //------------------------------------------------------------------------------
 // Time profiling

@@ -5,7 +5,7 @@
 #include <pcl/point_types.h>
 #include <pcl/pcl_base.h>
 #include <Eigen/Core>
-#include <object_detector/Planes.h>
+#include <vision_msgs/Planes.h>
 #include "obb.h"
 
 namespace common {
@@ -24,11 +24,11 @@ namespace vision {
 
         void set_as_ground_plane() { _is_ground_plane = true; }
 
-        const pcl::ModelCoefficientsConstPtr& get_coefficients() { return _coefficients; }
-        const OrientedBoundingBox& get_obb() { return _obb; }
-        bool is_ground_plane() { return _is_ground_plane; }
+        const pcl::ModelCoefficientsConstPtr& get_coefficients() const { return _coefficients; }
+        const OrientedBoundingBox& get_obb() const { return _obb; }
+        bool is_ground_plane() const { return _is_ground_plane; }
 
-        double distance(const Eigen::Vector3f& p)
+        double distance(const Eigen::Vector3f& p) const
         {
             double dist = (_coefficients->values[0] * p(0) + _coefficients->values[1] * p(1) + _coefficients->values[2] * p(2) + _coefficients->values[3]);
             return dist;
@@ -49,11 +49,11 @@ namespace vision {
         a.insert(a.begin(), b.begin(), b.end());
     }
 
-    void planesToMsg(const SegmentedPlane::ArrayPtr& source, object_detector::PlanesPtr& msg)
+    void planesToMsg(const SegmentedPlane::ArrayPtr& source, vision_msgs::PlanesPtr& msg)
     {        
         for(int i = 0; i < source->size(); ++i)
         {
-            object_detector::Plane msg_plane;
+            vision_msgs::Plane msg_plane;
 
             SegmentedPlane& seg_plane = source->at(i);
             const pcl::ModelCoefficientsConstPtr& coeff = seg_plane.get_coefficients();
@@ -68,11 +68,11 @@ namespace vision {
         }
     }
 
-    void msgToPlanes(const object_detector::PlanesConstPtr& msg, SegmentedPlane::ArrayPtr& target)
+    void msgToPlanes(const vision_msgs::PlanesConstPtr& msg, SegmentedPlane::ArrayPtr& target)
     {
         for(int i = 0; i < msg->planes.size(); ++i)
         {
-            const object_detector::Plane& msg_plane = msg->planes[i];
+            const vision_msgs::Plane& msg_plane = msg->planes[i];
 
             //copy over coefficients
             pcl::ModelCoefficientsPtr coeff(new pcl::ModelCoefficients);
