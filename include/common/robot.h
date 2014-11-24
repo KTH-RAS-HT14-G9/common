@@ -36,10 +36,10 @@ namespace ir {
     const double offset_rear_left = dim::body_width/2.0 - 0.0305;
     const double offset_rear_right = dim::body_width/2.0 - 0.030;
     
-    const double offset_front_left_forward = 8.4;
-    const double offset_front_right_forward = 8.4;
-    const double offset_rear_left_forward = 8.2;
-    const double offset_rear_right_forward = 8.3;
+    const double offset_front_left_forward = 0.084;
+    const double offset_front_right_forward = 0.084;
+    const double offset_rear_left_forward = 0.082;
+    const double offset_rear_right_forward = 0.083;
 
     static double distance(int id, int voltage) {
         double dist= 0;
