@@ -4,12 +4,16 @@
 #include <ros/ros.h>
 #include <pcl/common/pca.h>
 #include <pcl/common/common.h>
-#include "types.h"
+#include <common/types.h>
 
 namespace common {
 
     class OrientedBoundingBox {
     public:
+
+        typedef boost::shared_ptr<OrientedBoundingBox> Ptr;
+        typedef boost::shared_ptr<const OrientedBoundingBox> ConstPtr;
+
         OrientedBoundingBox(const Eigen::Vector3f t,
                             const Eigen::Quaternionf r,
                             float w, float h, float d)
