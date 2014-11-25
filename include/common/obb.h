@@ -14,6 +14,8 @@ namespace common {
         typedef boost::shared_ptr<OrientedBoundingBox> Ptr;
         typedef boost::shared_ptr<const OrientedBoundingBox> ConstPtr;
 
+        OrientedBoundingBox() {}
+
         OrientedBoundingBox(const Eigen::Vector3f t,
                             const Eigen::Quaternionf r,
                             float w, float h, float d)
