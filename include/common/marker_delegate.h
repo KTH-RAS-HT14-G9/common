@@ -173,8 +173,6 @@ void MarkerDelegate::add(const vision_msgs::PlanesConstPtr &planes, bool add_gro
         marker.pose.position.y = pos(1);
         marker.pose.position.z = pos(2);
 
-        ROS_ERROR("Pos: %.3lf, %.3lf, %.3lf",pos(0),pos(1),pos(2));
-
         Eigen::Quaternionf rot = obb.get_rotation();
         marker.pose.orientation.w = rot.w();
         marker.pose.orientation.x = rot.x();
