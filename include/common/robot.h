@@ -56,7 +56,7 @@ namespace ir {
                 
                 dist =  0.01*(FL_a1*exp(-((v-FL_b1)/FL_c1)*((v-FL_b1)/FL_c1)) + FL_a2*exp(-((v-FL_b2)/FL_c2)*((v-FL_b2)/FL_c2)));
                
-                if (std::isinf(dist)) return 0.04;
+                if (std::isinf(dist) || dist < 0.04) return 0.04;
                 return dist;
             }
             case id_front_right:
@@ -70,7 +70,7 @@ namespace ir {
                 
                 dist =  0.01*(FR_a1*exp(-((v-FR_b1)/FR_c1)*((v-FR_b1)/FR_c1)) + FR_a2*exp(-((v-FR_b2)/FR_c2)*((v-FR_b2)/FR_c2)));
                
-                if (std::isinf(dist)) return 0.04;
+                if (std::isinf(dist) || dist < 0.04) return 0.04;
                 return dist;
             }
             case id_rear_left:
@@ -80,7 +80,7 @@ namespace ir {
                 const double BL_c=4.234;
                 dist=0.01*(BL_a*pow(v,BL_b)+BL_c);
 
-                if (std::isinf(dist)) return 0.04;
+                if (std::isinf(dist) || dist < 0.04) return 0.04;
                 return dist;
             }
             case id_rear_right:
@@ -94,7 +94,7 @@ namespace ir {
                 
                 dist =  0.01*(BR_a1*exp(-((v-BR_b1)/BR_c1)*((v-BR_b1)/BR_c1)) + BR_a2*exp(-((v-BR_b2)/BR_c2)*((v-BR_b2)/BR_c2)));
                
-                if (std::isinf(dist)) return 0.04;
+                if (std::isinf(dist) || dist < 0.04) return 0.04;
                 return dist;
             }
             case id_front_long_left:
@@ -104,7 +104,7 @@ namespace ir {
                 const double FL_L_c=-0.7674;
                 dist=0.01*(FL_L_a*pow(v,FL_L_b)+FL_L_c);
 
-                if (std::isinf(dist)) return 0.1;
+                if (std::isinf(dist) || dist < 0.04) return 0.1;
                 return dist;
             }
             case id_front_long_right:
@@ -114,7 +114,7 @@ namespace ir {
                 const double FR_L_c=-0.5847;
                 dist=0.01*(FR_L_a*pow(v,FR_L_b)+FR_L_c);
 
-                if (std::isinf(dist)) return 0.1;
+                if (std::isinf(dist) || dist < 0.04) return 0.1;
                 return dist;
             }
             default:
