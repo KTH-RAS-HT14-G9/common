@@ -7,6 +7,7 @@
 #include <visualization_msgs/MarkerArray.h>
 #include <vision_msgs/Planes.h>
 #include <common/object_classification.h>
+#include <math.h>
 
 namespace common {
 
@@ -38,9 +39,114 @@ MarkerDelegate::MarkerDelegate(const std::string &frame, const std::string &nmes
 {
 }
 
+void hueToRGB(double hue, float& r, float& g, float& b)
+{
+    double v = 1.0;
+    double s = 1.0;
+
+    double c = v*s;
+    double x = c*(1.0-std::abs(fmod(hue/60.0,2.0) - 1.0));
+    double m = v-c;
+
+    double r_,g_,b_;
+
+    if (hue < 60.0) {
+        r_ = c;
+        g_ = x;
+        b_ = 0;
+    }
+    else if (hue < 120.0) {
+        r_ = x;
+        g_ = c;
+        b_ = 0;
+    }
+    else if (hue < 180.0) {
+        r_ = 0;
+        g_ = c;
+        b_ = x;
+    }
+    else if (hue < 240.0) {
+        r_ = 0;
+        g_ = x;
+        b_ = c;
+    }
+    else if (hue < 300.0) {
+        r_ = x;
+        g_ = 0;
+        b_ = c;
+    }
+    else {
+        r_ = c;
+        g_ = 0;
+        b_ = x;
+    }
+
+    r = (float)r_;
+    g = (float)g_;
+    b = (float)b_;
+}
+
 void MarkerDelegate::add(const common::ObjectClassification &object)
 {
+    if (object.shape().is_undefined()) {
+        ROS_ERROR("Cannot draw object which has no classified shape.");
+        return;
+    }
 
+    visualization_msgs::Marker marker;
+    float r=0.5,g=0.5,b=0.5;
+    if (!object.color().is_undefined()) {
+        hueToRGB(ObjectColorMap::instance().get(object.color().name()), r, g, b);
+    }
+    marker.color.r = r;
+    marker.color.g = g;
+    marker.color.b = b;
+    marker.color.a = 1.0f;
+
+    marker.pose.orientation.w = 1.0;
+
+    if(object.shape().name().compare("Cube")) {
+        marker.type = visualization_msgs::Marker::CUBE;
+
+        const Eigen::Vector3f& centroid = object.shape().centroid();
+        marker.pose.position.x = centroid(0);
+        marker.pose.position.y = centroid(1);
+        marker.pose.position.z = 0.02;
+
+        marker.scale.x = 0.04;
+        marker.scale.y = 0.04;
+        marker.scale.z = 0.04;
+    }
+    else if (object.shape().name().compare("Sphere")) {
+        marker.type = visualization_msgs::Marker::SPHERE;
+
+        const pcl::ModelCoefficientsConstPtr& coeff = object.shape().coefficients();
+        marker.pose.position.x = coeff->values[0];
+        marker.pose.position.y = coeff->values[1];
+        marker.pose.position.z = coeff->values[2];
+
+        marker.scale.x = coeff->values[3];
+        marker.scale.y = coeff->values[3];
+        marker.scale.z = coeff->values[3];
+    }
+    else if (object.shape().name().compare("Cylinder")) {
+        marker.type = visualization_msgs::Marker::CYLINDER;
+        const pcl::ModelCoefficientsConstPtr& coeff = object.shape().coefficients();
+
+        marker.pose.position.x = coeff->values[0];
+        marker.pose.position.y = coeff->values[1];
+        marker.pose.position.z = 0.02;
+
+        marker.scale.x = coeff->values[3];
+        marker.scale.y = coeff->values[3];
+        marker.scale.z = 0.04;
+    }
+    else {
+        ROS_ERROR("Cannot draw object of %s. Not defined yet.",object.shape().name().c_str());
+        return;
+    }
+
+    add(marker);
 }
 
 void MarkerDelegate::add(const vision_msgs::PlanesConstPtr &planes, bool add_ground)
