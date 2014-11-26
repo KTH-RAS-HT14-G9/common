@@ -42,7 +42,7 @@ public:
     const double probability() const {return _probability;}
 
     const pcl::ModelCoefficientsConstPtr& coefficients() const {return _coefficients;}
-    const Eigen::Vector3f centroid() const {return _centroid;}
+    const Eigen::Vector3f& centroid() const {return _centroid;}
     const OrientedBoundingBox::ConstPtr& obb() const {return _obb;}
 
 protected:
