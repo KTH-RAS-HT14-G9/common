@@ -11,4 +11,11 @@
 // Time profiling
 #define ENABLE_TIME_PROFILING 0
 
+#define MEASURE_TIME(...) \
+[&] { \
+    ros::Time start = ros::Time::now(); \
+    __VA_ARGS__; \
+    return ros::Time::now().toSec()-start.toSec(); \
+} ();
+
 #endif // COMMON_DEBUG_H
