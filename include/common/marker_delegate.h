@@ -105,7 +105,7 @@ void MarkerDelegate::add(const common::ObjectClassification &object)
 
     marker.pose.orientation.w = 1.0;
 
-    if(object.shape().name().compare("Cube")) {
+    if(object.shape().name().compare("Cube") == 0) {
         marker.type = visualization_msgs::Marker::CUBE;
 
         const Eigen::Vector3f& centroid = object.shape().centroid();
@@ -117,7 +117,7 @@ void MarkerDelegate::add(const common::ObjectClassification &object)
         marker.scale.y = 0.04;
         marker.scale.z = 0.04;
     }
-    else if (object.shape().name().compare("Sphere")) {
+    else if (object.shape().name().compare("Sphere") == 0) {
         marker.type = visualization_msgs::Marker::SPHERE;
 
         const pcl::ModelCoefficientsConstPtr& coeff = object.shape().coefficients();
@@ -129,7 +129,7 @@ void MarkerDelegate::add(const common::ObjectClassification &object)
         marker.scale.y = coeff->values[3];
         marker.scale.z = coeff->values[3];
     }
-    else if (object.shape().name().compare("Cylinder")) {
+    else if (object.shape().name().compare("Cylinder") == 0) {
         marker.type = visualization_msgs::Marker::CYLINDER;
         const pcl::ModelCoefficientsConstPtr& coeff = object.shape().coefficients();
 
