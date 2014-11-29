@@ -16,19 +16,30 @@ class MarkerDelegate
 public:
     MarkerDelegate(const std::string& frame, const std::string& nmespace);
 
-    void add(const common::ObjectClassification& object);
+    int add(const common::ObjectClassification& object, int id = -1);
     void add(const vision_msgs::PlanesConstPtr& planes, bool add_ground = false);
-    void add(visualization_msgs::Marker& marker);
+    int add(visualization_msgs::Marker& marker, int id = -1);
+
+    int add_cube(float x, float y, float scale, int r, int g, int b, int id = -1);
+    int add_line(float x0, float y0, float x1, float y1, float z, float thickness, int r, int g, int b, int id = -1);
 
     void clear();
 
     visualization_msgs::MarkerArrayConstPtr get() const;
 
 protected:
+
+    int get_next_id();
+    int index_from_id(int id);
+
+    void set_position(visualization_msgs::Marker& marker, float x, float y, float z);
+    void set_color(visualization_msgs::Marker& marker, int r, int g, int b);
+
     visualization_msgs::MarkerArrayPtr _marker;
     ros::Publisher _pub_marker;
     std::string _frame, _namespace;
     int _id;
+    int _id_offset;
 };
 
 MarkerDelegate::MarkerDelegate(const std::string &frame, const std::string &nmespace)
@@ -36,7 +47,20 @@ MarkerDelegate::MarkerDelegate(const std::string &frame, const std::string &nmes
     ,_marker(new visualization_msgs::MarkerArray)
     ,_namespace(nmespace)
     ,_id(0)
+    ,_id_offset(0)
 {
+}
+
+int MarkerDelegate::get_next_id()
+{
+    int next = (_id+_id_offset);
+    ++_id;
+    return next;
+}
+
+int MarkerDelegate::index_from_id(int id)
+{
+    return id-_id_offset;
 }
 
 void hueToRGB(double hue, float& r, float& g, float& b)
@@ -86,14 +110,37 @@ void hueToRGB(double hue, float& r, float& g, float& b)
     b = (float)b_;
 }
 
-void MarkerDelegate::add(const common::ObjectClassification &object)
+void MarkerDelegate::set_position(visualization_msgs::Marker &marker, float x, float y, float z)
+{
+    marker.pose.position.x = x;
+    marker.pose.position.y = y;
+    marker.pose.position.z = z;
+
+    marker.pose.orientation.w = 1.0f;
+    marker.pose.orientation.x = 0.0f;
+    marker.pose.orientation.y = 0.0f;
+    marker.pose.orientation.z = 0.0f;
+}
+
+void MarkerDelegate::set_color(visualization_msgs::Marker &marker, int r, int g, int b)
+{
+    marker.color.r = (float)r/255.0f;
+    marker.color.g = (float)g/255.0f;
+    marker.color.b = (float)b/255.0f;
+    marker.color.a = 1.0f;
+}
+
+int MarkerDelegate::add(const common::ObjectClassification &object, int id)
 {
     if (object.shape().is_undefined()) {
         ROS_ERROR("Cannot draw object which has no classified shape.");
-        return;
+        return -1;
     }
 
     visualization_msgs::Marker marker;
+
+    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+
     float r=0.5,g=0.5,b=0.5;
     if (!object.color().is_undefined()) {
         hueToRGB(ObjectColorMap::instance().get(object.color().name()), r, g, b);
@@ -143,10 +190,10 @@ void MarkerDelegate::add(const common::ObjectClassification &object)
     }
     else {
         ROS_ERROR("Cannot draw object of %s. Not defined yet.",object.shape().name().c_str());
-        return;
+        return -1;
     }
 
-    add(marker);
+    return add(marker, id);
 }
 
 void MarkerDelegate::add(const vision_msgs::PlanesConstPtr &planes, bool add_ground)
@@ -160,10 +207,8 @@ void MarkerDelegate::add(const vision_msgs::PlanesConstPtr &planes, bool add_gro
 
         const vision_msgs::Plane& plane = planes->planes[i];
         visualization_msgs::Marker marker;
-        marker.color.r = 200.0f/255.0f;
-        marker.color.g = 150.0f/255.0f;
-        marker.color.b = 90.0f /255.0f;
-        marker.color.a = 1.0f;
+
+        set_color(marker, 200, 150, 90);
         marker.type = visualization_msgs::Marker::CUBE;
 
         OrientedBoundingBox obb = OrientedBoundingBox::deserialize(plane.bounding_box);
@@ -187,20 +232,76 @@ void MarkerDelegate::add(const vision_msgs::PlanesConstPtr &planes, bool add_gro
     }
 }
 
-void MarkerDelegate::add(visualization_msgs::Marker& marker)
+int MarkerDelegate::add(visualization_msgs::Marker& marker, int id)
 {
-    marker.action = visualization_msgs::Marker::ADD;
-    marker.id = _id++;
-    marker.header.frame_id = _frame;
-    marker.header.stamp = ros::Time::now();
-    marker.ns = _namespace;
-    marker.lifetime = ros::Duration(60*15,0);
-    _marker->markers.push_back(marker);
+    if (id >= 0) {
+        visualization_msgs::Marker& ex_marker = _marker->markers.at(index_from_id(id));
+
+        ex_marker.header.stamp = ros::Time::now();
+        ex_marker.lifetime = ros::Duration(60*15,0);
+
+        return id;
+    }
+    else {
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.id = get_next_id();
+        marker.header.frame_id = _frame;
+        marker.header.stamp = ros::Time::now();
+        marker.ns = _namespace;
+        marker.lifetime = ros::Duration(60*15,0);
+
+        _marker->markers.push_back(marker);
+
+        return marker.id;
+    }
+}
+
+int MarkerDelegate::add_cube(float x, float y, float scale, int r, int g, int b, int id)
+{
+    visualization_msgs::Marker marker;
+    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+
+    marker.type = visualization_msgs::Marker::CUBE;
+
+    set_position(marker, x, y, scale/2.0f);
+    set_color(marker, r, g, b);
+
+    marker.scale.x = scale;
+    marker.scale.y = scale;
+    marker.scale.z = scale;
+
+    return add(marker, id);
+}
+
+int MarkerDelegate::add_line(float x0, float y0, float x1, float y1, float z, float thickness, int r, int g, int b, int id)
+{
+    visualization_msgs::Marker marker;
+    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+
+    marker.type = visualization_msgs::Marker::LINE_LIST;
+
+    set_position(marker, 0,0,0);
+    set_color(marker, r,g,b);
+
+    marker.scale.x = thickness;
+    marker.points.resize(2);
+
+    marker.points[0].x = x0;
+    marker.points[0].y = y0;
+    marker.points[0].z = z;
+
+    marker.points[1].x = x1;
+    marker.points[1].y = y1;
+    marker.points[1].z = z;
+
+    return add(marker, id);
 }
 
 void MarkerDelegate::clear()
 {
     _marker->markers.clear();
+    _id_offset = _id;
+    _id = 0;
 }
 
 visualization_msgs::MarkerArrayConstPtr MarkerDelegate::get() const
