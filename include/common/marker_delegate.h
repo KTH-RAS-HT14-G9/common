@@ -20,8 +20,10 @@ public:
     void add(const vision_msgs::PlanesConstPtr& planes, bool add_ground = false);
     int add(visualization_msgs::Marker& marker, int id = -1);
 
-    int add_cube(float x, float y, float scale, int r, int g, int b, const std::string& label = "", int id = -1);
+    int add_cube(float x, float y, float scale, int r, int g, int b, int id = -1);
     int add_line(float x0, float y0, float x1, float y1, float z, float thickness, int r, int g, int b, int id = -1);
+    int add_circle(float x, float y, float z, float radius, int r, int g, int b, int a, int id = -1);
+    int add_text(float x, float y, float z, const std::string& text, int r, int g, int b, int id = -1);
 
     void clear();
 
@@ -256,13 +258,29 @@ int MarkerDelegate::add(visualization_msgs::Marker& marker, int id)
     }
 }
 
-int MarkerDelegate::add_cube(float x, float y, float scale, int r, int g, int b, const std::string &label, int id)
+int MarkerDelegate::add_text(float x, float y, float z, const std::string &text, int r, int g, int b, int id)
+{
+    visualization_msgs::Marker marker;
+    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+
+    marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+    marker.text = text;
+
+    set_position(marker, x, y, z);
+    set_color(marker, r, g, b);
+
+    marker.scale.z = 0.05f;
+
+    return add(marker, id);
+
+}
+
+int MarkerDelegate::add_cube(float x, float y, float scale, int r, int g, int b, int id)
 {
     visualization_msgs::Marker marker;
     if (id >= 0) marker = _marker->markers.at(index_from_id(id));
 
     marker.type = visualization_msgs::Marker::CUBE;
-    marker.text = label;
 
     set_position(marker, x, y, scale/2.0f);
     set_color(marker, r, g, b);
@@ -296,6 +314,24 @@ int MarkerDelegate::add_line(float x0, float y0, float x1, float y1, float z, fl
     marker.points[1].z = z;
 
     return add(marker, id);
+}
+
+int MarkerDelegate::add_circle(float x, float y, float z, float radius, int r, int g, int b, int a, int id)
+{
+    visualization_msgs::Marker marker;
+    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+
+    marker.type = visualization_msgs::Marker::CYLINDER;
+
+    set_position(marker, x,y,z);
+    set_color(marker, r,g,b);
+    marker.color.a = (float)a/255.0f;
+
+    marker.scale.x = radius;
+    marker.scale.y = radius;
+    marker.scale.z = 0.0001f;
+
+    return add(marker,id);
 }
 
 void MarkerDelegate::clear()
