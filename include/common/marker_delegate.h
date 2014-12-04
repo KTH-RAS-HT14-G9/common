@@ -140,62 +140,63 @@ int MarkerDelegate::add(const common::ObjectClassification &object, int id)
     }
 
     visualization_msgs::Marker marker;
+    visualization_msgs::Marker* marker_ptr = &marker;
 
-    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+    if (id >= 0) marker_ptr = &_marker->markers.at(index_from_id(id));
 
     float r=0.5,g=0.5,b=0.5;
     if (!object.color().is_undefined()) {
         hueToRGB(ObjectColorMap::instance().get(object.color().name()), r, g, b);
     }
-    marker.color.r = r;
-    marker.color.g = g;
-    marker.color.b = b;
-    marker.color.a = 1.0f;
+    marker_ptr->color.r = r;
+    marker_ptr->color.g = g;
+    marker_ptr->color.b = b;
+    marker_ptr->color.a = 1.0f;
 
-    marker.pose.orientation.w = 1.0;
+    marker_ptr->pose.orientation.w = 1.0;
 
     if(object.shape().name().compare("Cube") == 0) {
-        marker.type = visualization_msgs::Marker::CUBE;
+        marker_ptr->type = visualization_msgs::Marker::CUBE;
 
         const Eigen::Vector3f& centroid = object.shape().centroid();
-        marker.pose.position.x = centroid(0);
-        marker.pose.position.y = centroid(1);
-        marker.pose.position.z = 0.02;
+        marker_ptr->pose.position.x = centroid(0);
+        marker_ptr->pose.position.y = centroid(1);
+        marker_ptr->pose.position.z = 0.02;
 
-        marker.scale.x = 0.04;
-        marker.scale.y = 0.04;
-        marker.scale.z = 0.04;
+        marker_ptr->scale.x = 0.04;
+        marker_ptr->scale.y = 0.04;
+        marker_ptr->scale.z = 0.04;
     }
     else if (object.shape().name().compare("Sphere") == 0) {
-        marker.type = visualization_msgs::Marker::SPHERE;
+        marker_ptr->type = visualization_msgs::Marker::SPHERE;
 
         const pcl::ModelCoefficientsConstPtr& coeff = object.shape().coefficients();
-        marker.pose.position.x = coeff->values[0];
-        marker.pose.position.y = coeff->values[1];
-        marker.pose.position.z = coeff->values[2];
+        marker_ptr->pose.position.x = coeff->values[0];
+        marker_ptr->pose.position.y = coeff->values[1];
+        marker_ptr->pose.position.z = coeff->values[2];
 
-        marker.scale.x = coeff->values[3];
-        marker.scale.y = coeff->values[3];
-        marker.scale.z = coeff->values[3];
+        marker_ptr->scale.x = coeff->values[3];
+        marker_ptr->scale.y = coeff->values[3];
+        marker_ptr->scale.z = coeff->values[3];
     }
     else if (object.shape().name().compare("Cylinder") == 0) {
-        marker.type = visualization_msgs::Marker::CYLINDER;
+        marker_ptr->type = visualization_msgs::Marker::CYLINDER;
         const pcl::ModelCoefficientsConstPtr& coeff = object.shape().coefficients();
 
-        marker.pose.position.x = coeff->values[0];
-        marker.pose.position.y = coeff->values[1];
-        marker.pose.position.z = 0.02;
+        marker_ptr->pose.position.x = coeff->values[0];
+        marker_ptr->pose.position.y = coeff->values[1];
+        marker_ptr->pose.position.z = 0.02;
 
-        marker.scale.x = coeff->values[3];
-        marker.scale.y = coeff->values[3];
-        marker.scale.z = 0.04;
+        marker_ptr->scale.x = coeff->values[3];
+        marker_ptr->scale.y = coeff->values[3];
+        marker_ptr->scale.z = 0.04;
     }
     else {
         ROS_ERROR("Cannot draw object of %s. Not defined yet.",object.shape().name().c_str());
         return -1;
     }
 
-    return add(marker, id);
+    return add(*marker_ptr, id);
 }
 
 void MarkerDelegate::add(const vision_msgs::PlanesConstPtr &planes, bool add_ground)
@@ -261,77 +262,81 @@ int MarkerDelegate::add(visualization_msgs::Marker& marker, int id)
 int MarkerDelegate::add_text(float x, float y, float z, const std::string &text, int r, int g, int b, int id)
 {
     visualization_msgs::Marker marker;
-    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+    visualization_msgs::Marker* marker_ptr = &marker;
+    if (id >= 0) marker_ptr = &_marker->markers.at(index_from_id(id));
 
-    marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
-    marker.text = text;
+    marker_ptr->type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+    marker_ptr->text = text;
 
     set_position(marker, x, y, z);
     set_color(marker, r, g, b);
 
-    marker.scale.z = 0.05f;
+    marker_ptr->scale.z = 0.05f;
 
-    return add(marker, id);
+    return add(*marker_ptr, id);
 
 }
 
 int MarkerDelegate::add_cube(float x, float y, float scale, int r, int g, int b, int id)
 {
     visualization_msgs::Marker marker;
-    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+    visualization_msgs::Marker* marker_ptr = &marker;
+    if (id >= 0) marker_ptr = &_marker->markers.at(index_from_id(id));
 
-    marker.type = visualization_msgs::Marker::CUBE;
+    marker_ptr->type = visualization_msgs::Marker::CUBE;
 
     set_position(marker, x, y, scale/2.0f);
     set_color(marker, r, g, b);
 
-    marker.scale.x = scale;
-    marker.scale.y = scale;
-    marker.scale.z = scale;
+    marker_ptr->scale.x = scale;
+    marker_ptr->scale.y = scale;
+    marker_ptr->scale.z = scale;
 
-    return add(marker, id);
+    return add(*marker_ptr, id);
 }
 
 int MarkerDelegate::add_line(float x0, float y0, float x1, float y1, float z, float thickness, int r, int g, int b, int id)
 {
     visualization_msgs::Marker marker;
-    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+    visualization_msgs::Marker* marker_ptr = &marker;
+    if (id >= 0) marker_ptr = &_marker->markers.at(index_from_id(id));
 
-    marker.type = visualization_msgs::Marker::LINE_LIST;
+    marker_ptr->type = visualization_msgs::Marker::LINE_LIST;
 
     set_position(marker, 0,0,0);
     set_color(marker, r,g,b);
 
-    marker.scale.x = thickness;
-    marker.points.resize(2);
+    marker_ptr->scale.x = thickness;
+    marker_ptr->points.resize(2);
 
-    marker.points[0].x = x0;
-    marker.points[0].y = y0;
-    marker.points[0].z = z;
+    marker_ptr->points[0].x = x0;
+    marker_ptr->points[0].y = y0;
+    marker_ptr->points[0].z = z;
 
-    marker.points[1].x = x1;
-    marker.points[1].y = y1;
-    marker.points[1].z = z;
+    marker_ptr->points[1].x = x1;
+    marker_ptr->points[1].y = y1;
+    marker_ptr->points[1].z = z;
 
-    return add(marker, id);
+    return add(*marker_ptr, id);
 }
 
 int MarkerDelegate::add_circle(float x, float y, float z, float radius, int r, int g, int b, int a, int id)
 {
     visualization_msgs::Marker marker;
-    if (id >= 0) marker = _marker->markers.at(index_from_id(id));
+    visualization_msgs::Marker* marker_ptr = &marker;
+    if (id >= 0) marker_ptr = &_marker->markers.at(index_from_id(id));
 
-    marker.type = visualization_msgs::Marker::CYLINDER;
+    marker_ptr->type = visualization_msgs::Marker::CYLINDER;
 
-    set_position(marker, x,y,z);
-    set_color(marker, r,g,b);
-    marker.color.a = (float)a/255.0f;
+    set_position(*marker_ptr, x,y,z);
+    set_color(*marker_ptr, r,g,b);
+    marker_ptr->color.a = (float)a/255.0f;
 
-    marker.scale.x = radius;
-    marker.scale.y = radius;
-    marker.scale.z = 0.0001f;
+    marker_ptr->scale.x = radius;
+    marker_ptr->scale.y = radius;
+    marker_ptr->scale.z = 0.0001f;
 
-    return add(marker,id);
+    return add(*marker_ptr,id);
 }
 
 void MarkerDelegate::clear()
