@@ -1,6 +1,8 @@
 #ifndef VISUALIZATION_ADDONS_H
 #define VISUALIZATION_ADDONS_H
 
+#ifdef ENABLE_VISUALIZATION_RECOGNITION || ENABLE_VISUALIZATION_ROIS || ENABLE_VISUALIZATION_PLANES
+
 #include <ros/ros.h>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
@@ -58,5 +60,7 @@ namespace pcl
 
     }
 }
+
+#endif
 
 #endif // VISUALIZATION_ADDONS_H
