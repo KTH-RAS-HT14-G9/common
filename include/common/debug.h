@@ -3,9 +3,10 @@
 
 //------------------------------------------------------------------------------
 // Vision
-#define ENABLE_VISUALIZATION_PLANES 0
-#define ENABLE_VISUALIZATION_ROIS 0
-#define ENABLE_VISUALIZATION_RECOGNITION 0
+//to enable visualization, enable "add_definitions" in cmakelists.txt of object_detector / object_recognition
+//#define ENABLE_VISUALIZATION_PLANES 0
+//#define ENABLE_VISUALIZATION_ROIS 0
+//#define ENABLE_VISUALIZATION_RECOGNITION 0
 
 //------------------------------------------------------------------------------
 // Time profiling
