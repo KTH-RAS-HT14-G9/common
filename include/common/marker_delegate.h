@@ -285,8 +285,8 @@ int MarkerDelegate::add_cube(float x, float y, float scale, int r, int g, int b,
 
     marker_ptr->type = visualization_msgs::Marker::CUBE;
 
-    set_position(marker, x, y, scale/2.0f);
-    set_color(marker, r, g, b);
+    set_position(*marker_ptr, x, y, scale/2.0f);
+    set_color(*marker_ptr, r, g, b);
 
     marker_ptr->scale.x = scale;
     marker_ptr->scale.y = scale;
@@ -303,8 +303,8 @@ int MarkerDelegate::add_line(float x0, float y0, float x1, float y1, float z, fl
 
     marker_ptr->type = visualization_msgs::Marker::LINE_LIST;
 
-    set_position(marker, 0,0,0);
-    set_color(marker, r,g,b);
+    set_position(*marker_ptr, 0,0,0);
+    set_color(*marker_ptr, r,g,b);
 
     marker_ptr->scale.x = thickness;
     marker_ptr->points.resize(2);
