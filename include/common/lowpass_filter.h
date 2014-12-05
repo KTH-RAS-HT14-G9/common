@@ -11,6 +11,10 @@ namespace common {
         ,_initialized(false)
         {}
 
+        double init_to(double value) {
+            _last_y = value;
+        }
+
         double filter(double measurement) {
             if (_initialized == false) {
                 _last_y = measurement;
