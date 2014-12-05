@@ -13,6 +13,7 @@ namespace common {
 
         double init_to(double value) {
             _last_y = value;
+            _initialized = true;
         }
 
         double filter(double measurement) {
