@@ -29,8 +29,8 @@ public:
         return std::isnan(_probability);
     }
 
-    bool has_shape_attributes() {
-        return centroid(0)!=0 || centroid(1)!=0;
+    bool has_shape_attributes() const {
+        return _centroid(0) != 0 || _centroid(1) != 0;
     }
 
     void set_shape_attributes(const pcl::ModelCoefficientsConstPtr& coefficients,
