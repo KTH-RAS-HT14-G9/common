@@ -33,11 +33,11 @@ namespace common {
           */
         OrientedBoundingBox(const SharedPointCloudRGB& cloud);
 
-        const Eigen::Vector3f& get_translation() { return translation; }
-        const Eigen::Quaternionf& get_rotation() { return rotation; }
-        float get_width() { return width; }
-        float get_height() { return height; }
-        float get_depth() { return depth; }
+        const Eigen::Vector3f& get_translation() const { return translation; }
+        const Eigen::Quaternionf& get_rotation() const { return rotation; }
+        float get_width() const { return width; }
+        float get_height() const { return height; }
+        float get_depth() const { return depth; }
 
         void serialize(std::vector<float>& target) const;
         static OrientedBoundingBox deserialize(const std::vector<float>& source);
