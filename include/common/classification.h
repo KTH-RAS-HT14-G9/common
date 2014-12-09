@@ -29,6 +29,10 @@ public:
         return std::isnan(_probability);
     }
 
+    bool has_shape_attributes() {
+        return centroid(0)!=0 || centroid(1)!=0;
+    }
+
     void set_shape_attributes(const pcl::ModelCoefficientsConstPtr& coefficients,
                         const Eigen::Vector3f& centroid,
                         const OrientedBoundingBox::ConstPtr& obb)
@@ -36,6 +40,10 @@ public:
         _coefficients = coefficients;
         _centroid = centroid;
         _obb = obb;
+    }
+
+    void rename(const std::string& name) {
+        _name = name;
     }
 
     const std::string& name() const {return _name;}
