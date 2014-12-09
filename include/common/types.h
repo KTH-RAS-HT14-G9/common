@@ -42,7 +42,7 @@ namespace common {
             make("green",       110.0);
             make("green_light", 65.0);
             make("orange",      20.0);
-            make("plurple",     280.0);
+            make("purple",     280.0);
         }
 
         void make(const std::string& name, double value) {
