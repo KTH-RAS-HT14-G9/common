@@ -12,7 +12,7 @@ namespace dim {
     const double robot_height = 0.28;
     const double wheel_radius = 0.04975;
     //const double wheel_distance = 0.215;
-    const double wheel_distance = 0.22192; //corrected
+    const double wheel_distance = 0.213; //corrected
     const double body_width = 0.163;
 }
 
