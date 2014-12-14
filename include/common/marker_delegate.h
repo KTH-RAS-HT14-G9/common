@@ -8,6 +8,7 @@
 #include <vision_msgs/Planes.h>
 #include <common/object_classification.h>
 #include <math.h>
+#include <navigation_msgs/Node.h>
 
 namespace common {
 
@@ -24,6 +25,7 @@ public:
     int add_line(float x0, float y0, float x1, float y1, float z, float thickness, int r, int g, int b, int id = -1);
     int add_circle(float x, float y, float z, float radius, int r, int g, int b, int a, int id = -1);
     int add_text(float x, float y, float z, const std::string& text, int r, int g, int b, int id = -1);
+    int add_path(std::vector<navigation_msgs::Node>& nodes, float z, float thickness, int r, int g, int b, int id = -1);
 
     void clear();
 
@@ -241,7 +243,7 @@ int MarkerDelegate::add(visualization_msgs::Marker& marker, int id)
         visualization_msgs::Marker& ex_marker = _marker->markers.at(index_from_id(id));
 
         ex_marker.header.stamp = ros::Time::now();
-        ex_marker.lifetime = ros::Duration(60*15,0);
+        ex_marker.lifetime = ros::Duration(60,0);
 
         return id;
     }
@@ -251,7 +253,7 @@ int MarkerDelegate::add(visualization_msgs::Marker& marker, int id)
         marker.header.frame_id = _frame;
         marker.header.stamp = ros::Time::now();
         marker.ns = _namespace;
-        marker.lifetime = ros::Duration(60*15,0);
+        marker.lifetime = ros::Duration(60,0);
 
         _marker->markers.push_back(marker);
 
@@ -316,6 +318,29 @@ int MarkerDelegate::add_line(float x0, float y0, float x1, float y1, float z, fl
     marker_ptr->points[1].x = x1;
     marker_ptr->points[1].y = y1;
     marker_ptr->points[1].z = z;
+
+    return add(*marker_ptr, id);
+}
+
+int MarkerDelegate::add_path(std::vector<navigation_msgs::Node>& nodes, float z, float thickness, int r, int g, int b, int id)
+{
+    visualization_msgs::Marker marker;
+    visualization_msgs::Marker* marker_ptr = &marker;
+    if (id >= 0) marker_ptr = &_marker->markers.at(index_from_id(id));
+
+    marker_ptr->type = visualization_msgs::Marker::LINE_STRIP;
+
+    set_position(*marker_ptr, 0,0,0);
+    set_color(*marker_ptr, r,g,b);
+
+    marker_ptr->scale.x = thickness;
+    marker_ptr->points.resize(nodes.size());
+
+    for(int i = 0; i < nodes.size(); ++i) {
+        marker_ptr->points[i].x = nodes[i].x;
+        marker_ptr->points[i].y = nodes[i].y;
+        marker_ptr->points[i].z = z;
+    }
 
     return add(*marker_ptr, id);
 }
