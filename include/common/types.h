@@ -36,8 +36,9 @@ namespace common {
         std::map<std::string, double> _colormap;
 
         ObjectColorMap() {
-            make("red",         361.30828);
-            make("yellow",      34.643364);
+            make("red",         359.30828);
+            //make("yellow",      34.643364);
+            make("yellow",       45.0);
             make("blue",        215.820892);
             make("green",       110.0);
             make("green_light", 65.0);
